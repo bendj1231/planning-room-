@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { AppLanguage, AppSection, BoardItem, BoardLink } from './types';
+import { AppLanguage, AppSection, BoardItem, BoardLink, Contact } from './types';
 import { TRANSLATIONS } from './constants';
 import Button from './components/Button';
 
@@ -18,6 +18,14 @@ const INITIAL_BOARD_LINKS: BoardLink[] = [
   { id: 'l2', fromId: '3', toId: '2', variant: 'neutral' },
   { id: 'l3', fromId: '4', toId: '2', variant: 'neutral' },
   { id: 'l4', fromId: '2', toId: '5', variant: 'positive' }
+];
+
+const MOCK_CONTACTS: Contact[] = [
+  { id: 'c1', firstName: 'Sarah', lastName: 'Connor', email: 'sarah@skynet.com', phone: '', company: 'Resistance', position: 'Lead', remarks: '', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026024d', dateJoined: '2023-01-01', createdAt: Date.now() },
+  { id: 'c2', firstName: 'John', lastName: 'Doe', email: 'john@example.com', phone: '', company: 'Tech Corp', position: 'Developer', remarks: '', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d', dateJoined: '2023-02-15', createdAt: Date.now() },
+  { id: 'c3', firstName: 'Jane', lastName: 'Smith', email: 'jane@design.studio', phone: '', company: 'Creative Inc', position: 'Designer', remarks: '', avatarUrl: 'https://i.pravatar.cc/150?u=a04258114e29026302d', dateJoined: '2023-03-10', createdAt: Date.now() },
+  { id: 'c4', firstName: 'Mike', lastName: 'Ross', email: 'mike@legal.com', phone: '', company: 'Pearson', position: 'Associate', remarks: '', avatarUrl: 'https://i.pravatar.cc/150?u=a048581f4e29026024d', dateJoined: '2023-04-01', createdAt: Date.now() },
+  { id: 'c5', firstName: 'Elena', lastName: 'Gilbert', email: 'elena@mystic.falls', phone: '', company: 'Salvatore School', position: 'Medic', remarks: '', avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026024e', dateJoined: '2023-05-20', createdAt: Date.now() },
 ];
 
 // --- ICONS ---
@@ -1337,6 +1345,41 @@ const PlanningBoard: React.FC<PlanningBoardProps> = ({
               );
               })}
           </div>
+        </div>
+
+        {/* Team Dock (Contact List) */}
+        <div 
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 max-w-[90vw] bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200 dark:border-stone-700 rounded-2xl shadow-xl p-2 flex items-center gap-2 overflow-x-auto no-scrollbar"
+            onWheel={(e) => e.stopPropagation()} // Stop propagation to allow horizontal scrolling without panning board
+        >
+            <div className="flex items-center gap-2 px-2">
+                <div className="w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center border border-dashed border-stone-300 dark:border-stone-600 text-stone-400 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-500 hover:border-blue-400 transition-colors" title="Add Team Member">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                </div>
+                <div className="w-px h-6 bg-stone-200 dark:bg-stone-700 mx-1"></div>
+                {MOCK_CONTACTS.map(contact => (
+                    <div key={contact.id} className="group relative flex-shrink-0 cursor-pointer">
+                        <img 
+                            src={contact.avatarUrl} 
+                            alt={contact.firstName} 
+                            className="w-10 h-10 rounded-full border-2 border-white dark:border-stone-800 shadow-sm object-cover group-hover:scale-110 transition-transform" 
+                        />
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block whitespace-nowrap bg-black text-white text-[10px] font-bold py-1 px-2 rounded">
+                            {contact.firstName}
+                        </div>
+                        {/* Status Dot */}
+                        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-stone-900 rounded-full"></div>
+                    </div>
+                ))}
+                 {/* Dummy Extra Contacts to demonstrate scrolling */}
+                 {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={`extra-${i}`} className="group relative flex-shrink-0 cursor-pointer opacity-50 hover:opacity-100 transition-opacity">
+                        <div className="w-10 h-10 rounded-full bg-stone-200 dark:bg-stone-800 flex items-center justify-center text-[10px] font-bold text-stone-500 border-2 border-white dark:border-stone-900">
+                            P{i+1}
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
       </div>
     );
