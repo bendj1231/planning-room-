@@ -60,8 +60,9 @@ export interface BoardLink {
   variant: 'critical' | 'positive' | 'alternative' | 'neutral';
 }
 
-// Updated AppSection type to only include planning, document, and scan
+// Updated AppSection type to only include dashboard, planning, document, and scan
 export type AppSection = 
+  | 'dashboard'
   | 'planning' 
   | 'document'
   | 'scan';

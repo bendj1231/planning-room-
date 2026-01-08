@@ -40,6 +40,128 @@ const CheckeredFlagIcon: React.FC<{ className?: string }> = ({ className }) => (
 
 // --- COMPONENTS ---
 
+interface DashboardProps {
+  boardItems: BoardItem[];
+  t: (key: string) => string;
+  onNavigate: (section: AppSection) => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ boardItems, t, onNavigate }) => {
+  const stats = useMemo(() => {
+    return {
+      goals: boardItems.filter(i => i.type === 'goal').length,
+      objectives: boardItems.filter(i => i.type === 'objective').length,
+      tasks: boardItems.filter(i => i.type === 'sticky').length,
+    };
+  }, [boardItems]);
+
+  return (
+    <div className="w-full h-full bg-slate-50 dark:bg-slate-900 overflow-y-auto custom-scrollbar p-8">
+      <div className="max-w-6xl mx-auto space-y-12">
+        {/* Welcome Section */}
+        <div className="flex flex-col gap-2">
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{t('welcome')}</h1>
+          <p className="text-slate-500 font-medium">{new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white dark:bg-stone-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex items-center justify-between group hover:border-black dark:hover:border-white transition-colors">
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t('totalGoals')}</p>
+              <p className="text-4xl font-black text-slate-900 dark:text-white">{stats.goals}</p>
+            </div>
+            <div className="w-12 h-12 bg-black text-white flex items-center justify-center rounded-xl">
+               <CheckeredFlagIcon className="w-6 h-6" />
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-stone-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex items-center justify-between group hover:border-red-500 transition-colors">
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t('activeObjectives')}</p>
+              <p className="text-4xl font-black text-slate-900 dark:text-white">{stats.objectives}</p>
+            </div>
+            <div className="w-12 h-12 bg-red-600 text-white flex items-center justify-center rounded-xl">
+               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-stone-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex items-center justify-between group hover:border-yellow-400 transition-colors">
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t('pendingTasks')}</p>
+              <p className="text-4xl font-black text-slate-900 dark:text-white">{stats.tasks}</p>
+            </div>
+            <div className="w-12 h-12 bg-yellow-400 text-black flex items-center justify-center rounded-xl">
+               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Project / Access Cards */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('latestProject')}</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             {/* Main Project Card */}
+             <div 
+               onClick={() => onNavigate('planning')}
+               className="bg-white dark:bg-stone-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-300 relative overflow-hidden group"
+             >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-500 opacity-10 rounded-bl-full group-hover:opacity-20 transition-opacity"></div>
+                <div className="flex justify-between items-start mb-12">
+                   <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                      <span className="font-black text-2xl">P</span>
+                   </div>
+                   <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-widest">Active</div>
+                </div>
+                <div>
+                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{t('openBoard')}</h3>
+                   <p className="text-slate-500 dark:text-slate-400 text-sm">{boardItems.length} {t('items')} • {t('lastEdited')}</p>
+                </div>
+             </div>
+
+             {/* Document Card */}
+             <div 
+               onClick={() => onNavigate('document')}
+               className="bg-white dark:bg-stone-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-300 relative overflow-hidden group"
+             >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-stone-100 dark:bg-stone-800 rounded-bl-full"></div>
+                <div className="flex justify-between items-start mb-12">
+                   <div className="w-14 h-14 bg-white dark:bg-black border border-slate-200 dark:border-stone-700 rounded-2xl flex items-center justify-center text-slate-900 dark:text-white shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                   </div>
+                </div>
+                <div>
+                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{t('openDocument')}</h3>
+                   <p className="text-slate-500 dark:text-slate-400 text-sm">{t('strategicPlan')} • DOCX</p>
+                </div>
+             </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="space-y-6">
+           <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('quickAccess')}</h2>
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button 
+                onClick={() => onNavigate('scan')}
+                className="p-4 bg-white dark:bg-stone-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-stone-800 transition-colors text-left"
+              >
+                 <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-3">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                 </div>
+                 <span className="font-bold text-sm text-slate-900 dark:text-white">{t('startScan')}</span>
+              </button>
+           </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
 // 1. Scanner/Document Writer Component
 interface DocBlock {
   id: string;
@@ -681,9 +803,20 @@ const PlanningBoard: React.FC<PlanningBoardProps> = ({
 
     const handleWheel = (e: React.WheelEvent) => {
         if (focusModeId) return;
-        const zoomSensitivity = 0.001;
-        const newScale = Math.min(Math.max(0.1, transform.s - e.deltaY * zoomSensitivity), 5);
-        setTransform(prev => ({ ...prev, s: newScale }));
+
+        // If Ctrl key is pressed, Zoom.
+        if (e.ctrlKey || e.metaKey) {
+            const zoomSensitivity = 0.001;
+            const newScale = Math.min(Math.max(0.1, transform.s - e.deltaY * zoomSensitivity), 5);
+            setTransform(prev => ({ ...prev, s: newScale }));
+        } else {
+            // Otherwise, Pan (Scroll)
+            setTransform(prev => ({
+                ...prev,
+                x: prev.x - e.deltaX,
+                y: prev.y - e.deltaY
+            }));
+        }
     };
 
     const handleStartLink = (e: React.MouseEvent, id: string, variant: BoardLink['variant']) => {
@@ -1210,7 +1343,7 @@ const PlanningBoard: React.FC<PlanningBoardProps> = ({
 };
 
 const App: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<AppSection>('planning');
+  const [activeSection, setActiveSection] = useState<AppSection>('dashboard');
   const [boardItems, setBoardItems] = useState<BoardItem[]>(INITIAL_BOARD_ITEMS);
   const [boardLinks, setBoardLinks] = useState<BoardLink[]>(INITIAL_BOARD_LINKS);
   const [language, setLanguage] = useState<AppLanguage>('en');
@@ -1241,6 +1374,13 @@ const App: React.FC = () => {
         </div>
         
         <nav className="flex-1 flex flex-col gap-3 w-full px-2">
+            <button 
+                onClick={() => setActiveSection('dashboard')}
+                className={`w-full aspect-square rounded-xl flex items-center justify-center transition-all duration-200 ${activeSection === 'dashboard' ? 'bg-slate-100 dark:bg-stone-800 text-blue-600 shadow-inner' : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-stone-800 hover:text-slate-600'}`}
+                title={t('dashboard')}
+            >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+            </button>
             <button 
                 onClick={() => setActiveSection('planning')}
                 className={`w-full aspect-square rounded-xl flex items-center justify-center transition-all duration-200 ${activeSection === 'planning' ? 'bg-slate-100 dark:bg-stone-800 text-blue-600 shadow-inner' : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-stone-800 hover:text-slate-600'}`}
@@ -1276,6 +1416,13 @@ const App: React.FC = () => {
       </aside>
 
       <main className="flex-1 relative h-full overflow-hidden bg-slate-50 dark:bg-slate-900">
+        {activeSection === 'dashboard' && (
+            <Dashboard 
+                boardItems={boardItems} 
+                t={t}
+                onNavigate={setActiveSection}
+            />
+        )}
         {activeSection === 'planning' && (
             <PlanningBoard 
                 boardItems={boardItems} 
