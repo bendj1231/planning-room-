@@ -1,5 +1,5 @@
 
-export type AppLanguage = 'en' | 'fr' | 'de' | 'ru' | 'ar' | 'zh' | 'ja' | 'ko';
+export type AppLanguage = 'en';
 
 export interface CustomGroup {
   id: string;
@@ -58,6 +58,18 @@ export interface BoardLink {
   fromId: string;
   toId: string;
   variant: 'critical' | 'positive' | 'alternative' | 'neutral';
+}
+
+export interface PlanningRoom {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: number;
+  updatedAt: number;
+  items: BoardItem[];
+  links: BoardLink[];
+  themeColor: string;
+  boardStyle?: 'noir' | 'modern';
 }
 
 // Updated AppSection type to only include dashboard, planning, document, and scan
